@@ -55,6 +55,11 @@ HTML 테이블 코드만 반환해. 다른 텍스트 없이."""
     html = response.content[0].text
     # table 태그만 추출
     import re
+    # 마크다운 코드블록 제거
+    html = re.sub(r'```html\s*', '', html)
+    html = re.sub(r'```\s*', '', html)
+    html = html.strip()
+
     match = re.search(r'<table.*</table>', html, re.DOTALL)
     table_html = match.group() if match else html
 
