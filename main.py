@@ -39,12 +39,15 @@ async def analyze(file: UploadFile = File(...)):
 - 한국 행정 서류 표준 용어를 기준으로 판단해줘
 
 규칙:
+규칙:
 1. <table> 태그로 서류 레이아웃 재현
-2. 각 입력 칸은 class="field easy|medium|hard" 로 표시
-3. 각 칸에 data-title="칸이름" data-desc="쉬운설명" data-example="예시" 속성 추가
-4. 레이블 칸은 class="label-cell" 사용
-5. 섹션 구분은 class="section-label" 사용
-6. colspan, rowspan 활용해서 최대한 원본처럼
+2. 각 입력 칸은 반드시 class="field easy|medium|hard" 로 표시
+3. 모든 field 칸에 반드시 data-title, data-desc, data-example 세 가지 속성 전부 추가
+   예시: <td class="field easy" data-title="성명" data-desc="신청인 이름을 씁니다" data-example="홍길동">
+4. data 속성이 하나라도 빠지면 안됨
+5. 레이블 칸은 class="label-cell" 사용
+6. 섹션 구분은 class="section-label" 사용
+7. colspan, rowspan 활용해서 최대한 원본처럼
 
 난이도 기준:
 - easy: 이름, 전화번호 등 바로 작성 가능
