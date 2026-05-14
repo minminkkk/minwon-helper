@@ -31,46 +31,53 @@ async def analyze(file: UploadFile = File(...)):
                 },
                 {
                     "type": "text",
-                    "text": """이 행정 서류를 분석해서 아래 JSON 형식으로만 반환해줘. 마크다운 없이 JSON만.
+                    "text": """이 행정 서류를 분석해서 원본과 비슷한 HTML 테이블로 재현해줘.
 
 주의사항:
 - 흐릿하거나 불분명한 글자는 반드시 문맥상 올바른 한국 행정 용어로 교정해줘
-- 자주 틀리는 단어: "유대전화"→"휴대전화", "수민등록"→"주민등록", "포지"→"토지", "긴축물"→"건축물"
+- 자주 틀리는 단어 목록:
+  "유대전화" → "휴대전화"
+  "수민등록" → "주민등록"  
+  "포지" → "토지"
+  "긴축물" → "건축물"
+  "신고서" → "신고서"
+- 한국 행정 서류 표준 용어 기준으로 반드시 교정할 것
+- 테이블 레이아웃은 원본 서류의 colspan, rowspan을 최대한 정확하게 재현해줘
+- 섹션이 합쳐진 칸은 반드시 rowspan 값을 정확히 계산해서 넣어줘
 
-{
-  "title": "서류 제목",
-  "fields": [
-    {
-      "name": "칸 이름",
-      "difficulty": "easy|medium|hard",
-      "desc": "이 칸에 뭘 써야 하는지 쉬운 말로 설명",
-      "example": "예시값"
-    }
-  ]
-}
+규칙:
+1. <table> 태그로 서류 레이아웃 재현
+2. 각 입력 칸은 반드시 class="field easy|medium|hard" 로 표시
+3. 모든 field 칸에 반드시 data-title, data-desc, data-example 세 가지 속성 전부 추가
+   예시: <td class="field easy" data-title="성명" data-desc="신청인 이름을 씁니다" data-example="홍길동">
+4. data 속성이 하나라도 빠지면 안됨
+5. 레이블 칸은 class="label-cell" 사용
+6. 섹션 구분은 class="section-label" 사용
+7. colspan, rowspan 활용해서 최대한 원본처럼
 
-difficulty 기준:
+난이도 기준:
 - easy: 이름, 전화번호 등 바로 작성 가능
 - medium: 서류 확인 필요
-- hard: 전문가 확인 권장"""
+- hard: 전문가 확인 권장
+
+HTML 테이블 코드만 반환해. 다른 텍스트 없이."""
                 }
             ]
         }]
     )
 
-    import json, re
-    text = response.content[0].text
-    text = re.sub(r'```json\s*', '', text)
-    text = re.sub(r'```\s*', '', text)
-    data = json.loads(text.strip())
+    html = response.content[0].text
+    # table 태그만 추출
+    import re
+    # 마크다운 코드블록 제거
+    html = re.sub(r'```html\s*', '', html)
+    html = re.sub(r'```\s*', '', html)
+    html = html.strip()
 
-    # 이미지도 같이 반환
-    return JSONResponse({
-        "title": data["title"],
-        "fields": data["fields"],
-        "image": base64_image,
-        "media_type": media_type
-    })
+    match = re.search(r'<table.*</table>', html, re.DOTALL)
+    table_html = match.group() if match else html
+
+    return JSONResponse({"table": table_html})
 
 @app.post("/question")
 async def question(data: dict):
