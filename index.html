@@ -287,7 +287,7 @@ async function askQuestion() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         question: q,
-        context: document.getElementById('docTable').innerText
+        context: document.getElementById('docTable').innerHTML
       })
     });
     const data = await res.json();
