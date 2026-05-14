@@ -31,26 +31,17 @@ async def analyze(file: UploadFile = File(...)):
                 },
                 {
                     "type": "text",
-                    "text": """이 행정 서류 이미지를 분석해서 아래 JSON 형식으로만 반환해줘. 마크다운 없이 JSON만.
-
-각 입력 칸의 위치를 이미지 전체 크기 대비 퍼센트(%)로 반환해줘.
-x, y는 칸의 왼쪽 상단 꼭짓점, width와 height는 칸의 크기야.
+                    "text": """이 행정 서류를 분석해서 아래 JSON 형식으로만 반환해줘. 마크다운 없이 JSON만.
 
 주의사항:
-- 흐릿한 글자는 문맥상 올바른 한국 행정 용어로 교정해줘
-- "유대전화"→"휴대전화", "수민등록"→"주민등록", "포지"→"토지", "긴축물"→"건축물"
-- 레이블 칸(칸 이름)은 제외하고 실제 입력하는 칸만 포함해줘
-- 좌표는 최대한 정확하게
+- 흐릿하거나 불분명한 글자는 반드시 문맥상 올바른 한국 행정 용어로 교정해줘
+- 자주 틀리는 단어: "유대전화"→"휴대전화", "수민등록"→"주민등록", "포지"→"토지", "긴축물"→"건축물"
 
 {
   "title": "서류 제목",
   "fields": [
     {
       "name": "칸 이름",
-      "x": 10.5,
-      "y": 8.2,
-      "width": 25.0,
-      "height": 3.5,
       "difficulty": "easy|medium|hard",
       "desc": "이 칸에 뭘 써야 하는지 쉬운 말로 설명",
       "example": "예시값"
@@ -73,6 +64,7 @@ difficulty 기준:
     text = re.sub(r'```\s*', '', text)
     data = json.loads(text.strip())
 
+    # 이미지도 같이 반환
     return JSONResponse({
         "title": data["title"],
         "fields": data["fields"],
