@@ -21,7 +21,7 @@ async def analyze(file: UploadFile = File(...)):
 
     response = client.messages.create(
         model="claude-sonnet-4-5",
-        max_tokens=8000,
+        max_tokens=4000,
         messages=[{
             "role": "user",
             "content": [
@@ -71,19 +71,7 @@ difficulty 기준:
     text = response.content[0].text
     text = re.sub(r'```json\s*', '', text)
     text = re.sub(r'```\s*', '', text)
-    text = text.strip()
-    # JSON 잘린 경우 복구 시도
-    try:
-        data = json.loads(text)
-    except json.JSONDecodeError:
-        # fields 배열이 잘린 경우 닫아주기
-        if '"fields"' in text and not text.endswith('}'):
-            text = text.rstrip(',\n ')
-            if not text.endswith(']'):
-                text += ']'
-            if not text.endswith('}'):
-                text += '}'
-        data = json.loads(text)
+    data = json.loads(text.strip())
 
     return JSONResponse({
         "title": data["title"],
