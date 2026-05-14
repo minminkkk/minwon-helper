@@ -14,8 +14,7 @@
     --easy: #10b981; --easy-light: #d1fae5;
     --medium: #f59e0b; --medium-light: #fef3c7;
     --hard: #ef4444; --hard-light: #fee2e2;
-    --bg: #f0f2f5; --paper: #fff;
-    --muted: #64748b;
+    --bg: #f0f2f5; --paper: #fff; --muted: #64748b;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); min-height: 100vh; padding: 24px 16px; }
@@ -52,98 +51,111 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* 결과 레이아웃 - 좌우 분할 */
-  .result-layout {
+  /* 결과 영역 */
+  .result-area {
     max-width: 960px; margin: 0 auto 16px;
     display: none;
-    gap: 16px;
   }
 
-  /* 모바일: 세로 / 데스크탑: 가로 */
-  @media (min-width: 768px) {
-    .result-layout { display: flex; align-items: flex-start; }
-    .image-panel { width: 45%; flex-shrink: 0; }
-    .cards-panel { flex: 1; }
-  }
-  @media (max-width: 767px) {
-    .result-layout { display: block; }
-    .image-panel { margin-bottom: 16px; }
-  }
-
-  /* 원본 사진 패널 */
-  .image-panel {
+  .doc-title-bar {
     background: var(--paper); border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    position: sticky; top: 16px;
+    padding: 14px 20px; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   }
 
-  .image-panel h3 {
-    font-size: 13px; font-weight: 600; color: var(--muted);
-    margin-bottom: 10px;
-  }
+  .doc-title-bar h2 { font-size: 16px; font-weight: 700; color: #1e293b; }
 
-  .image-panel img {
-    width: 100%; border-radius: 8px;
-    border: 1px solid #e2e8f0;
-  }
-
-  /* 카드 패널 */
-  .cards-panel {
-    display: flex; flex-direction: column; gap: 10px;
-  }
-
-  .doc-title {
-    background: var(--paper); border-radius: 12px;
-    padding: 16px 20px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-  }
-
-  .doc-title h2 {
-    font-size: 16px; font-weight: 700; color: #1e293b;
-  }
-
-  .legend {
-    display: flex; gap: 12px; flex-wrap: wrap;
-    margin-top: 8px;
-  }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; }
   .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
   .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
 
-  /* 필드 카드 */
-  .field-card {
-    background: var(--paper); border-radius: 10px;
-    padding: 14px 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    cursor: pointer;
-    border-left: 4px solid transparent;
-    transition: transform 0.1s, box-shadow 0.1s;
+  /* 이미지 오버레이 컨테이너 */
+  .image-container {
+    background: var(--paper); border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    position: relative;
+    display: inline-block;
+    width: 100%;
   }
-  .field-card:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-  .field-card.easy { border-left-color: var(--easy); }
-  .field-card.medium { border-left-color: var(--medium); }
-  .field-card.hard { border-left-color: var(--hard); }
 
-  .field-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .image-wrap {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
 
+  .image-wrap img {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+
+  /* 오버레이 칸 */
+  .overlay-field {
+    position: absolute;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.15s;
+    border: 2px solid transparent;
+  }
+
+  .overlay-field.easy {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+  }
+  .overlay-field.medium {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.4);
+  }
+  .overlay-field.hard {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+  }
+
+  .overlay-field:hover, .overlay-field.active {
+    border-width: 2px;
+    z-index: 10;
+  }
+  .overlay-field.easy:hover, .overlay-field.easy.active {
+    background: rgba(16, 185, 129, 0.35);
+    border-color: #10b981;
+  }
+  .overlay-field.medium:hover, .overlay-field.medium.active {
+    background: rgba(245, 158, 11, 0.35);
+    border-color: #f59e0b;
+  }
+  .overlay-field.hard:hover, .overlay-field.hard.active {
+    background: rgba(239, 68, 68, 0.35);
+    border-color: #ef4444;
+  }
+
+  /* 툴팁 */
+  .tooltip {
+    display: none; position: fixed; z-index: 9999;
+    background: #1e293b; color: #f8fafc;
+    padding: 14px 18px; border-radius: 10px;
+    max-width: 280px; font-size: 13px; line-height: 1.6;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    pointer-events: none;
+  }
+  .tooltip.visible { display: block; }
+  .tooltip-title { font-weight: 700; font-size: 14px; margin-bottom: 6px; color: #93c5fd; }
   .diff-badge {
-    font-size: 10px; font-weight: 700; padding: 2px 8px;
-    border-radius: 10px; color: white; flex-shrink: 0;
+    display: inline-block; font-size: 10px; padding: 2px 8px;
+    border-radius: 10px; margin-bottom: 6px; font-weight: 600; color: white;
   }
   .badge-easy { background: var(--easy); }
   .badge-medium { background: var(--medium); }
   .badge-hard { background: var(--hard); }
-
-  .field-name { font-size: 14px; font-weight: 600; color: #1e293b; }
-
-  .field-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
-
-  .field-example {
-    margin-top: 6px; padding: 5px 8px;
-    background: #f8fafc; border-radius: 6px;
-    font-size: 11px; color: #475569;
+  .tooltip-example {
+    margin-top: 8px; padding: 6px 8px;
+    background: rgba(255,255,255,0.1); border-radius: 4px; font-size: 11px;
   }
-  .field-example span { font-weight: 600; color: #2563eb; }
+  .tooltip-example span { color: #6ee7b7; font-weight: 600; }
 
   /* 질문 */
   .qa-section {
@@ -175,7 +187,7 @@
 
 <div class="header">
   <h1>📋 서류 도우미</h1>
-  <p>서류 사진을 업로드하면 각 칸 작성법을 알려드려요</p>
+  <p>서류 사진을 업로드하면 각 칸을 터치해서 작성법을 확인하세요</p>
 </div>
 
 <div class="upload-box" onclick="document.getElementById('fileInput').click()">
@@ -192,25 +204,19 @@
   <p style="font-size:13px;color:#64748b;margin-top:6px">잠시만 기다려주세요</p>
 </div>
 
-<!-- 결과: 좌우 분할 -->
-<div class="result-layout" id="resultLayout">
-  <!-- 왼쪽: 원본 사진 -->
-  <div class="image-panel">
-    <h3>📄 원본 서류</h3>
-    <img id="originalImg" src="" alt="원본 서류">
-  </div>
-
-  <!-- 오른쪽: 칸별 설명 카드 -->
-  <div class="cards-panel">
-    <div class="doc-title">
-      <h2 id="docTitle"></h2>
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>쉬움</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>보통</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>어려움</div>
-      </div>
+<div class="result-area" id="resultArea">
+  <div class="doc-title-bar">
+    <h2 id="docTitle"></h2>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>쉬움</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>보통</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div>어려움</div>
     </div>
-    <div id="fieldsContainer"></div>
+  </div>
+  <div class="image-container">
+    <div class="image-wrap" id="imageWrap">
+      <img id="originalImg" src="" alt="원본 서류">
+    </div>
   </div>
 </div>
 
@@ -223,8 +229,17 @@
   <div class="qa-answer" id="qaAnswer"></div>
 </div>
 
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-title" id="tt-title"></div>
+  <div id="tt-diff"></div>
+  <div id="tt-desc"></div>
+  <div class="tooltip-example" id="tt-example"></div>
+</div>
+
 <script>
+const tooltip = document.getElementById('tooltip');
 let docContext = "";
+let fieldsData = [];
 
 async function handleFile(event) {
   const file = event.target.files[0];
@@ -238,7 +253,7 @@ async function handleFile(event) {
   reader.readAsDataURL(file);
 
   document.getElementById('loadingBox').style.display = 'block';
-  document.getElementById('resultLayout').style.display = 'none';
+  document.getElementById('resultArea').style.display = 'none';
   document.getElementById('qaSection').style.display = 'none';
 
   const formData = new FormData();
@@ -247,8 +262,19 @@ async function handleFile(event) {
   try {
     const res = await fetch('/analyze', { method: 'POST', body: formData });
     const data = await res.json();
-    renderCards(data);
-    document.getElementById('resultLayout').style.display = 'flex';
+    fieldsData = data.fields;
+    docContext = data.fields.map(f => `${f.name}: ${f.desc} (예시: ${f.example})`).join('\n');
+    document.getElementById('docTitle').textContent = data.title;
+
+    // 이미지 로드 완료 후 오버레이 생성
+    const img = document.getElementById('originalImg');
+    if (img.complete) {
+      renderOverlays(data.fields);
+    } else {
+      img.onload = () => renderOverlays(data.fields);
+    }
+
+    document.getElementById('resultArea').style.display = 'block';
     document.getElementById('qaSection').style.display = 'block';
   } catch(e) {
     alert('분석 중 오류가 발생했어요. 다시 시도해주세요.');
@@ -257,34 +283,72 @@ async function handleFile(event) {
   }
 }
 
-function renderCards(data) {
-  document.getElementById('docTitle').textContent = data.title;
-  docContext = data.fields.map(f => `${f.name}: ${f.desc} (예시: ${f.example})`).join('\n');
+function renderOverlays(fields) {
+  const wrap = document.getElementById('imageWrap');
+  // 기존 오버레이 제거
+  wrap.querySelectorAll('.overlay-field').forEach(el => el.remove());
 
   const diffLabels = {
-    easy: ['badge-easy', '✅ 쉬움'],
-    medium: ['badge-medium', '⚠️ 보통'],
-    hard: ['badge-hard', '🔴 어려움']
+    easy: ['badge-easy', '✅ 쉬움 — 바로 작성 가능'],
+    medium: ['badge-medium', '⚠️ 보통 — 서류 확인 필요'],
+    hard: ['badge-hard', '🔴 어려움 — 전문가 확인 권장']
   };
 
-  const container = document.getElementById('fieldsContainer');
-  container.innerHTML = '';
+  fields.forEach(field => {
+    const el = document.createElement('div');
+    el.className = `overlay-field ${field.difficulty}`;
+    el.style.left = field.x + '%';
+    el.style.top = field.y + '%';
+    el.style.width = field.width + '%';
+    el.style.height = field.height + '%';
 
-  data.fields.forEach(field => {
-    const [cls, label] = diffLabels[field.difficulty] || diffLabels.easy;
-    const card = document.createElement('div');
-    card.className = `field-card ${field.difficulty}`;
-    card.innerHTML = `
-      <div class="field-top">
-        <span class="diff-badge ${cls}">${label}</span>
-        <span class="field-name">${field.name}</span>
-      </div>
-      <div class="field-desc">${field.desc}</div>
-      <div class="field-example"><span>예시:</span> ${field.example}</div>
-    `;
-    container.appendChild(card);
+    const show = (e) => {
+      const [cls, label] = diffLabels[field.difficulty] || diffLabels.easy;
+      document.getElementById('tt-title').textContent = field.name;
+      document.getElementById('tt-diff').innerHTML = `<span class="diff-badge ${cls}">${label}</span>`;
+      document.getElementById('tt-desc').textContent = field.desc || '';
+      document.getElementById('tt-example').innerHTML = `<span>예시:</span> ${field.example || ''}`;
+      tooltip.classList.add('visible');
+
+      // 활성 상태
+      wrap.querySelectorAll('.overlay-field').forEach(f => f.classList.remove('active'));
+      el.classList.add('active');
+      posTooltip(e);
+    };
+
+    const move = (e) => { if (tooltip.classList.contains('visible')) posTooltip(e); };
+
+    el.addEventListener('mouseenter', show);
+    el.addEventListener('mousemove', move);
+    el.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
+      el.classList.remove('active');
+    });
+    el.addEventListener('touchstart', e => { e.preventDefault(); show(e); }, {passive: false});
+    el.addEventListener('touchend', () => {
+      setTimeout(() => tooltip.classList.remove('visible'), 2000);
+    });
+
+    wrap.appendChild(el);
   });
 }
+
+function posTooltip(e) {
+  const x = e.clientX || (e.touches?.[0]?.clientX) || 0;
+  const y = e.clientY || (e.touches?.[0]?.clientY) || 0;
+  const tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  let left = x + 14, top = y + 14;
+  if (left + tw > vw - 8) left = x - tw - 14;
+  if (top + th > vh - 8) top = y - th - 14;
+  tooltip.style.left = Math.max(8, left) + 'px';
+  tooltip.style.top = Math.max(8, top) + 'px';
+}
+
+// 화면 크기 바뀌면 오버레이 재생성
+window.addEventListener('resize', () => {
+  if (fieldsData.length > 0) renderOverlays(fieldsData);
+});
 
 async function askQuestion() {
   const input = document.getElementById('questionInput');
@@ -320,6 +384,14 @@ async function askQuestion() {
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.activeElement.id === 'questionInput') askQuestion();
+});
+
+// 이미지 바깥 클릭하면 툴팁 닫기
+document.addEventListener('click', e => {
+  if (!e.target.classList.contains('overlay-field')) {
+    tooltip.classList.remove('visible');
+    document.querySelectorAll('.overlay-field').forEach(f => f.classList.remove('active'));
+  }
 });
 </script>
 
